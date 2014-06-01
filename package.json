@@ -1,0 +1,33 @@
+{
+  "name": "js-modelis-monk",
+  "version": "0.0.1",
+  "description": "monk plugin for modelis.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --harmony"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hrsh7th/js-modelis-monk.git"
+  },
+  "keywords": [
+    "modelis-plugin",
+    "monk"
+  ],
+  "author": "hrsh7th <hrsh7th@gmail.com> (https://github.com/hrsh7th)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hrsh7th/js-modelis-monk/issues"
+  },
+  "homepage": "https://github.com/hrsh7th/js-modelis-monk",
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "promise": "~5.0.0",
+    "monk": "~0.9.0"
+  },
+  "devDependencies": {
+    "co": "~3.0.6",
+    "mocha": "~1.20.0",
+    "modelis": "0.0.7"
+  }
+}
