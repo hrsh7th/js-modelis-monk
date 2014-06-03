@@ -1,5 +1,5 @@
 {
-  "name": "js-modelis-monk",
+  "name": "modelis-monk",
   "version": "0.0.1",
   "description": "monk plugin for modelis.",
   "main": "index.js",
