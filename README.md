@@ -34,13 +34,14 @@ monk plugin for modelis.
 
 ```js
 var Modelis = require('modelis');
+var monk = require('modelis-monk');
 
 // define.
 var User = Modelis.define('User').attr('name').attr('age');
 
 if (simple) {
   // use.
-  User.use(Modelis.plugins.monk({
+  User.use(monk({
     collection: 'users',
     connection: 'localhost/test'
   });
@@ -54,7 +55,7 @@ if (simple) {
 
 if (customize) {
   // use.
-  User.use(Modelis.plugins.monk({
+  User.use(monk({
     collection: 'users',
     connection: 'localhost/test'
   }, function(Repository, methods) {
@@ -82,12 +83,13 @@ if (customize) {
 
 ```js
 var Modelis = require('modelis');
+var monk = require('modelis-monk');
 
 // define.
 var User = Modelis.define('User').attr('name').attr('age');
 
 // use.
-User.use(Modelis.plugins.monk({
+User.use(monk({
   collection: 'users',
   connection: 'localhost/test'
 }));
@@ -118,13 +120,14 @@ new User({ name: 'john', age: 19 }).insert(function(err, success) {
 
 ```js
 var Modelis = require('modelis');
+var monk = require('modelis-monk');
 var co = require('co');
 
 // define.
 var User = Modelis.define('User').attr('name').attr('age');
 
 // define plugin.
-User.use(Modelis.plugins.monk({
+User.use(monk({
   collection: 'users',
   connection: 'localhost/test'
 }));
