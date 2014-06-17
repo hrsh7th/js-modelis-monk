@@ -19,7 +19,7 @@ module.exports = function(option, callback) {
   if (!option.collection)
     throw new Error('Modelis: monk.define: `option`.collection must be provide.');
 
-  return function() {
+  return function monk() {
     callback.apply(this, create(this, option));
   };
 
