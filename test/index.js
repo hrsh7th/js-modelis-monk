@@ -1,28 +1,18 @@
 var assert = require('assert');
 var _ = require('lodash');
 var co = require('co');
+var monk = require('../');
 var Modelis = require('modelis');
 
 describe('Modelis.plugins.monk', function() {
-  var User = Modelis.define('User')
-    .attr('id')
-    .attr('name');
-
-  User.use(Modelis.plugins.monk({
-    collection: 'users',
-    connection: 'localhost/test',
-    options: {
-      multi: true
-    }
-  }));
-
   describe('Repository', function() {
 
+    var User;
     beforeEach(function(done) {
       co(function*() {
-        try {
-          yield User.Repository.drop();
-        } catch (e) {}
+        User = Modelis.define('User').attr('id').attr('name');
+        User.use(monk('localhost/test', 'users'));
+        try { yield User.Repository.drop(); } catch (e) {}
       })(done);
     });
 
@@ -35,6 +25,17 @@ describe('Modelis.plugins.monk', function() {
         assert.ok(_.indexOf(['john', 'bob'], users[0].get('name')) > -1);
         assert.ok(_.indexOf(['john', 'bob'], users[1].get('name')) > -1);
         assert.ok(users[0].get('name') !== users[1].get('name'))
+      })(done);
+    });
+
+    it('find(option)', function(done) {
+      co(function*() {
+        yield User.Repository.insert({ name: 'john', age: 10 });
+        yield User.Repository.insert({ name: 'bob', age: 11 });
+        var users = yield User.Repository.find({}, { sort: { age: -1 } });
+        assert.ok(users.length === 2);
+        assert.equal('bob', users[0].get('name'));
+        assert.equal('john', users[1].get('name'));
       })(done);
     });
 
@@ -52,6 +53,15 @@ describe('Modelis.plugins.monk', function() {
         var user0 = yield User.Repository.insert({ name: 'john' });
         var user1 = yield User.Repository.findOne({ _id: user0.primary() });
         assert.ok(user1.get('name') === 'john');
+      })(done);
+    });
+
+    it('findOne(option)', function(done) {
+      co(function*() {
+        yield User.Repository.insert({ name: 'john', age: 10 });
+        yield User.Repository.insert({ name: 'bob', age: 11 });
+        var user = yield User.Repository.findOne({}, { sort: { age: -1 } });
+        assert.equal('bob', user.get('name'));
       })(done);
     });
 
@@ -145,11 +155,12 @@ describe('Modelis.plugins.monk', function() {
 
   describe('methods', function() {
 
+    var User;
     beforeEach(function(done) {
       co(function*() {
-        try {
-          yield User.Repository.drop();
-        } catch (e) {}
+        User = Modelis.define('User').attr('id').attr('name');
+        User.use(monk('localhost/test', 'users'));
+        try { yield User.Repository.drop(); } catch (e) {}
       })(done);
     });
 
