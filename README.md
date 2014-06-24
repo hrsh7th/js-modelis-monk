@@ -21,12 +21,22 @@ monk plugin for modelis.
 - methods.update
 - methods.remove
 
+
+
+
 #### Option
 
 - ```connection``` (required)
   - monk connection.
 - ```collection``` (required)
   - mongodb collection name.
+- ```option``` (optional)
+  - option.created
+    - modelis created attr name.
+    - default: ```created```
+  - option.updated
+    - modelis updated attr name.
+    - default: ```updated```
 
 #### Example
 
@@ -52,7 +62,7 @@ if (simple) {
 
 if (customize) {
   // use.
-  User.use(monk('localhost/test', 'users'), function(Repository, methods) {
+  User.use(monk('localhost/test', 'users'), {}, function(Repository, methods) {
 
     this.Store = Repository;
 

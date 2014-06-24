@@ -4,7 +4,7 @@ var co = require('co');
 var monk = require('../');
 var Modelis = require('modelis');
 
-describe('Modelis.plugins.monk', function() {
+describe('modelis-monk', function() {
   describe('Repository', function() {
 
     var User;
@@ -117,28 +117,43 @@ describe('Modelis.plugins.monk', function() {
       })(done);
     });
 
+    it('insert(created, updated)', function(done) {
+      co(function*() {
+        var user = yield User.Repository.insert({ name: 'john' });
+        assert.ok(typeof user.get('created').getTime() === 'number');
+        assert.ok(typeof user.get('updated').getTime() === 'number');
+      })(done);
+    });
+
     it('update', function(done) {
       co(function*() {
-        var user0 = yield User.Repository.insert({ name: 'john' });
+        var user1 = yield User.Repository.insert({ name: 'john' });
 
-        // change and update name.
-        user0.set('name', 'bob');
-        yield User.Repository.update({ _id: user0.primary() }, { $set: user0.diff() });
+        yield User.Repository.update({}, { $set: { name: 'bob' } });
 
-        var user1 = yield User.Repository.findById(user0.primary());
-        assert.ok(user1.get('name') === 'bob');
+        var user2 = yield User.Repository.findOne({ name: 'bob' });
+        assert.ok(user2.get('name') === 'bob');
+      })(done);
+    });
+
+    it('update(updated)', function(done) {
+      co(function*() {
+        var user1 = yield User.Repository.insert({ name: 'john' });
+
+        yield User.Repository.update({}, { $set: { name: 'bob' } });
+
+        var user2 = yield User.Repository.findOne({ name: 'bob' });
+        assert.ok(user1.get('updated') !== user2.get('updated'));
       })(done);
     });
 
     it('update(multi)', function(done) {
       co(function*() {
+        User.Repository.collection().options.multi = true;
         var user0 = yield User.Repository.insert({ name: 'john' });
         var user1 = yield User.Repository.insert({ name: 'bob' });
-
-        // change and update name.
-        user0.set('name', 'bob');
         var count = yield User.Repository.update({}, { $set: { age: 19 } });
-        assert.ok(count);
+        assert.ok(count === 2);
       })(done);
     });
 
@@ -148,6 +163,18 @@ describe('Modelis.plugins.monk', function() {
         yield User.Repository.remove({ _id: user0.primary() });
         var user1 = yield User.Repository.findById(user0.primary());
         assert.ok(!user1);
+      })(done);
+    });
+
+    it('remove(multi)', function(done) {
+      co(function*() {
+        User.Repository.collection().options.multi = true;
+        var user0 = yield User.Repository.insert({ name: 'john' });
+        var user1 = yield User.Repository.insert({ name: 'bob' });
+        yield User.Repository.remove({ _id: user0.primary() });
+        yield User.Repository.remove({ _id: user1.primary() });
+        var users = yield User.Repository.find({});
+        assert.ok(users.length === 0);
       })(done);
     });
 

@@ -6,16 +6,22 @@ var slice = Array.prototype.slice;
 /**
  * @param {String} connection
  * @param {String} collection
+ * @param {Object} option
  * @param {Function} exports
  * @return {Function}
  */
-module.exports = function(connection, collection, exports) {
+module.exports = function(connection, collection, option, exports) {
   if (!connection) throw new Error('connection is required.');
   if (!collection) throw new Error('collection is required.');
+  option = _.isPlainObject(option) ? option : {};
+  option = _.defaults(option, { created: 'created', updated: 'updated' });
   exports = typeof exports === 'function' ? exports : exports_;
 
   return function monk() {
-    var api = createAPI(this, connection, collection);
+    this.attr(option.created);
+    this.attr(option.updated);
+
+    var api = createAPI(this, connection, collection, option);
     exports.call(this, api.Repository, api.methods);
   };
 };
@@ -44,9 +50,10 @@ var connections = {};
  * @param {Function} Modelised
  * @param {String} connection
  * @param {String} collection
+ * @param {Object} option
  * @return {Object}
  */
-function createAPI(Modelised, connection, collection) {
+function createAPI(Modelised, connection, collection, option) {
 
   /**
    * @type {Function} Repository
@@ -165,6 +172,8 @@ function createAPI(Modelised, connection, collection) {
   Repository.insert = function() {
     var args = appendCallback(slice.call(arguments));
 
+    args[0][option.created] = args[0][option.updated] = new Date();
+
     var collection = this.collection();
     return createPromise(args.pop(), function(resolve, reject) {
       collection.insert.apply(collection, args.concat(function(err, doc) {
@@ -181,6 +190,8 @@ function createAPI(Modelised, connection, collection) {
    */
   Repository.update = function() {
     var args = appendCallback(slice.call(arguments));
+
+    args[1]['$set'][option.updated] = new Date();
 
     var collection = this.collection();
     return createPromise(args.pop(), function(resolve, reject) {
