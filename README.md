@@ -41,10 +41,7 @@ var User = Modelis.define('User').attr('name').attr('age');
 
 if (simple) {
   // use.
-  User.use(monk({
-    collection: 'users',
-    connection: 'localhost/test'
-  });
+  User.use(monk('localhost/test', 'users'));
 
   // User.Repository available.
   User.Repository.drop(function() {});
@@ -55,12 +52,10 @@ if (simple) {
 
 if (customize) {
   // use.
-  User.use(monk({
-    collection: 'users',
-    connection: 'localhost/test'
-  }, function(Repository, methods) {
-    this; //=> User.
+  User.use(monk('localhost/test', 'users'), function(Repository, methods) {
+
     this.Store = Repository;
+
     this.prototype.save = function() {
       if (this.primary() === undefined) {
         return methods.insert.apply(this, arguments);
@@ -68,6 +63,7 @@ if (customize) {
         return methods.update.apply(this, arguments);
       }
     };
+
     this.prototype.remove = methods.remove;
   });
 
@@ -89,10 +85,7 @@ var monk = require('modelis-monk');
 var User = Modelis.define('User').attr('name').attr('age');
 
 // use.
-User.use(monk({
-  collection: 'users',
-  connection: 'localhost/test'
-}));
+User.use(monk('localhost/test', 'users'));
 
 // connection.
 User.Repository.connection(); //=> monk connection.
@@ -127,10 +120,7 @@ var co = require('co');
 var User = Modelis.define('User').attr('name').attr('age');
 
 // define plugin.
-User.use(monk({
-  collection: 'users',
-  connection: 'localhost/test'
-}));
+User.use(monk('localhost/test', 'users'));
 
 co(function*() {
   // insert.
