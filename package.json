@@ -1,6 +1,6 @@
 {
   "name": "modelis-monk",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "monk plugin for modelis.",
   "main": "index.js",
   "scripts": {

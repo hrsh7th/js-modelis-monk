@@ -48,6 +48,15 @@ describe('modelis-monk', function() {
       })(done);
     });
 
+    it('count', function(done) {
+      co(function*() {
+        yield User.Repository.insert({ name: 'john' });
+        yield User.Repository.insert({ name: 'bob' });
+        var count = yield User.Repository.count({});
+        assert.ok(count === 2);
+      })(done);
+    });
+
     it('findOne', function(done) {
       co(function*() {
         var user0 = yield User.Repository.insert({ name: 'john' });

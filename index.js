@@ -114,6 +114,23 @@ function createAPI(Modelised, connection, collection, option) {
   };
 
   /**
+   * count.
+   *
+   * @return {Object}
+   */
+  Repository.count = function() {
+    var args = appendCallback(slice.call(arguments));
+
+    var collection = this.collection();
+    return createPromise(args.pop(), function(resolve, reject) {
+      collection.count.apply(collection, args.concat(function(err, count) {
+        if (err) return reject(err);
+        resolve(count);
+      }));
+    }.bind(this));
+  };
+
+  /**
    * findOne.
    *
    * @return {Object}
